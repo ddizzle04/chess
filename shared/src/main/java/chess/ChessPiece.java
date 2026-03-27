@@ -1,6 +1,8 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -9,8 +11,15 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+    private ChessGame.TeamColor pieceColor;
+    private PieceType type;
+    private boolean isInBounds(int row, int col){
+        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+    }
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.pieceColor = pieceColor;
+        this.type = type;
     }
 
     /**
@@ -29,14 +38,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return pieceColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -47,6 +56,62 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        Collection<ChessMove> moves = new ArrayList<>();
+        switch (type) {
+            case KNIGHT:
+                int currentRow = myPosition.getRow();
+                int currentCol = myPosition.getColumn();
+
+                int [][] knightMoves = {
+                        {2,1}, {2,-1}, {-2,1}, {-2,-1},
+                        {1,2}, {1,-2}, {-1,2}, {-1,-2}
+                };
+                for (int[] shift : knightMoves) {
+                    int newRow = currentRow + shift[0];
+                    int newCol = currentCol + shift[1];
+                    if (isInBounds(newRow, newCol)) {
+                        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                        ChessPiece pieceAtDestination = board.getPiece(newPosition);
+
+                        if(pieceAtDestination == null) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                        else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                    }
+                }
+                break;
+            case KING:
+
+                break;
+            case ROOK:
+
+                break;
+            case BISHOP:
+
+                break;
+            case QUEEN:
+
+                break;
+            case PAWN:
+
+                break;
+        }
+        return moves;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessPiece that = (ChessPiece) o;
+        return pieceColor == that.pieceColor && type == that.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pieceColor, type);
     }
 }
