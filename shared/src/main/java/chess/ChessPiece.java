@@ -13,6 +13,7 @@ import java.util.Objects;
 public class ChessPiece {
     private ChessGame.TeamColor pieceColor;
     private PieceType type;
+
     private boolean isInBounds(int row, int col){
         return row >= 1 && row <= 8 && col >= 1 && col <= 8;
     }
@@ -108,9 +109,40 @@ public class ChessPiece {
                 }
                 break;
             }
-            case ROOK:
+            case ROOK: {
+                int currentRow = myPosition.getRow();
+                int currentCol = myPosition.getColumn();
 
+                int[][] rookDirections = {
+                        {1, 0}, {-1, 0}, {0,1}, {0,-1}
+                };
+
+                for (int[] direction: rookDirections) {
+                    int rowChange = direction[0];
+                    int colChange = direction[1];
+
+                    int newRow = currentRow + rowChange;
+                    int newCol = currentCol + colChange;
+
+                    while (isInBounds(newRow, newCol)) {
+                        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                        ChessPiece pieceAtDestination = board.getPiece(newPosition);
+
+                        if (pieceAtDestination == null) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        } else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                            break;
+                        } else {
+                            break;
+                        }
+
+                        newRow += rowChange;
+                        newCol += colChange;
+                    }
+                }
                 break;
+            }
             case BISHOP:
 
                 break;
