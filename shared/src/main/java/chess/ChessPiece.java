@@ -58,13 +58,13 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         Collection<ChessMove> moves = new ArrayList<>();
         switch (type) {
-            case KNIGHT:
+            case KNIGHT: {
                 int currentRow = myPosition.getRow();
                 int currentCol = myPosition.getColumn();
 
-                int [][] knightMoves = {
-                        {2,1}, {2,-1}, {-2,1}, {-2,-1},
-                        {1,2}, {1,-2}, {-1,2}, {-1,-2}
+                int[][] knightMoves = {
+                        {2, 1}, {2, -1}, {-2, 1}, {-2, -1},
+                        {1, 2}, {1, -2}, {-1, 2}, {-1, -2}
                 };
                 for (int[] shift : knightMoves) {
                     int newRow = currentRow + shift[0];
@@ -73,18 +73,41 @@ public class ChessPiece {
                         ChessPosition newPosition = new ChessPosition(newRow, newCol);
                         ChessPiece pieceAtDestination = board.getPiece(newPosition);
 
-                        if(pieceAtDestination == null) {
+                        if (pieceAtDestination == null) {
                             moves.add(new ChessMove(myPosition, newPosition, null));
-                        }
-                        else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
+                        } else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
                             moves.add(new ChessMove(myPosition, newPosition, null));
                         }
                     }
                 }
                 break;
-            case KING:
+            }
+            case KING: {
+                int currentRow = myPosition.getRow();
+                int currentCol = myPosition.getColumn();
 
+                int[][] kingMoves = {
+                        {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+                        {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+                };
+
+                for (int[] shift : kingMoves) {
+                    int newRow = currentRow + shift[0];
+                    int newCol = currentCol + shift[1];
+
+                    if (isInBounds(newRow, newCol)) {
+                        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                        ChessPiece pieceAtDestination = board.getPiece(newPosition);
+
+                        if (pieceAtDestination == null) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        } else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        }
+                    }
+                }
                 break;
+            }
             case ROOK:
 
                 break;
