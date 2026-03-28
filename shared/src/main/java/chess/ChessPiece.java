@@ -143,9 +143,40 @@ public class ChessPiece {
                 }
                 break;
             }
-            case BISHOP:
+            case BISHOP: {
+                int currentRow = myPosition.getRow();
+                int currentCol = myPosition.getColumn();
 
+                int[][] bishopDirections = {
+                        {1, 1}, {1, -1}, {-1, 1}, {-1,-1}
+                };
+
+                for (int[] direction: bishopDirections) {
+                    int rowChange = direction[0];
+                    int colChange = direction[1];
+
+                    int newRow = currentRow + rowChange;
+                    int newCol = currentCol + colChange;
+
+                    while (isInBounds(newRow, newCol)) {
+                        ChessPosition newPosition = new ChessPosition(newRow, newCol);
+                        ChessPiece pieceAtDestination = board.getPiece(newPosition);
+
+                        if (pieceAtDestination == null) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                        } else if (pieceAtDestination.getTeamColor() != this.pieceColor) {
+                            moves.add(new ChessMove(myPosition, newPosition, null));
+                            break;
+                        } else {
+                            break;
+                        }
+
+                        newRow += rowChange;
+                        newCol += colChange;
+                    }
+                }
                 break;
+            }
             case QUEEN:
 
                 break;
