@@ -1,6 +1,5 @@
 package chess;
 
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -152,7 +151,7 @@ public class ChessGame {
                 if (piece != null && piece.getTeamColor() == teamColor) {
                     Collection<ChessMove> moves = validMoves(pos);
 
-                    if (moves != null && !moves.isEmpty()) {
+                    if (!moves.isEmpty()) {
                         return false;
                     }
                 }
@@ -169,7 +168,25 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
+        for (int row = 1; row <= 8; row ++) {
+            for (int col = 1; col <= 8; col ++) {
+                ChessPosition pos = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(pos);
+
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    Collection<ChessMove> moves = validMoves(pos);
+
+                    if (!moves.isEmpty()) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
     /**
