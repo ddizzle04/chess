@@ -203,7 +203,68 @@ public class ChessPiece {
                 }
                 break;
             case PAWN:
+                int direction = (pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
+                int startRow = (pieceColor == ChessGame.TeamColor.WHITE) ? 2 : 7;
+                int promotionRow = (pieceColor == ChessGame.TeamColor.WHITE) ? 8 : 1;
 
+                int row = myPosition.getRow();
+                int col = myPosition.getColumn();
+
+                int nextRow = row + direction;
+
+                if (nextRow >= 1 && nextRow <= 8) {
+                    ChessPosition forward = new ChessPosition(nextRow, col);
+
+                    if (board.getPiece(forward) == null) {
+                        if (nextRow == promotionRow) {
+                            for (PieceType promotion : new PieceType[]{
+                                    PieceType.QUEEN,
+                                    PieceType.ROOK,
+                                    PieceType.BISHOP,
+                                    PieceType.KNIGHT
+                            }) {
+                                moves.add(new ChessMove(myPosition, forward, promotion));
+                            }
+                        } else {
+                            moves.add(new ChessMove(myPosition, forward, null));
+                        }
+                    }
+                }
+
+                if (row == startRow) {
+                    ChessPosition oneAhead = new ChessPosition(row + direction, col);
+                    ChessPosition twoAhead = new ChessPosition(row + 2 * direction, col);
+
+                    if (board.getPiece(oneAhead) == null && board.getPiece(twoAhead) == null) {
+                        moves.add(new ChessMove(myPosition, twoAhead, null));
+                    }
+                }
+
+                int [] captureDirections = {-1, 1};
+
+                for (int colDirection : captureDirections) {
+                    int captureCol = col + colDirection;
+                    int captureRow = row + direction;
+
+                    if (captureCol >= 1 && captureCol <= 8 && captureRow >= 1 && captureRow <= 8) {
+                        ChessPosition capturePosition = new ChessPosition(captureRow, captureCol);
+
+                        if (board.getPiece(capturePosition) != null && board.getPiece(capturePosition).getTeamColor() != pieceColor) {
+                            if (captureRow == promotionRow) {
+                                for (PieceType promotion : new PieceType[]{
+                                        PieceType.QUEEN,
+                                        PieceType.ROOK,
+                                        PieceType.BISHOP,
+                                        PieceType.KNIGHT
+                                }) {
+                                    moves.add(new ChessMove(myPosition, capturePosition, promotion));
+                                }
+                            } else {
+                                moves.add(new ChessMove(myPosition, capturePosition, null));
+                            }
+                        }
+                    }
+                }
                 break;
         }
 
