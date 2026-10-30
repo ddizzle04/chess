@@ -87,7 +87,33 @@ public class ChessPiece {
                 }
                 break;
             case BISHOP:
+                int[][] bishopDirections= {
+                        {1, 1},
+                        {1, -1},
+                        {-1, 1},
+                        {-1, -1}
+                };
 
+                for (int[] direction : bishopDirections) {
+                    int row = myPosition.getRow() + direction[0];
+                    int col = myPosition.getColumn() + direction[1];
+
+                    while (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
+                        ChessPosition end = new ChessPosition(row, col);
+
+                        if (board.getPiece(end) == null) {
+                            moves.add(new ChessMove(myPosition, end, null));
+                        } else if (board.getPiece(end).getTeamColor() != pieceColor) {
+                            moves.add(new ChessMove(myPosition, end, null));
+                            break;
+                        } else {
+                            break;
+                        }
+
+                        row += direction[0];
+                        col += direction[1];
+                    }
+                }
                 break;
             case QUEEN:
 
