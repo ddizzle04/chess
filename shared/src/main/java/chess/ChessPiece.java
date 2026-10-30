@@ -176,7 +176,31 @@ public class ChessPiece {
                 }
                 break;
             case KNIGHT:
+                int[][] knightDirections = {
+                        {2, 1},
+                        {2, -1},
+                        {1, 2},
+                        {1, -2},
+                        {-2, 1},
+                        {-2, -1},
+                        {-1, 2},
+                        {-1, -2}
+                };
 
+                for (int[] direction : knightDirections) {
+                    int row = myPosition.getRow() + direction[0];
+                    int col = myPosition.getColumn() + direction[1];
+
+                    if (row >= 1 && row <= 8 && col >= 1 && col <= 8) {
+                        ChessPosition end = new ChessPosition(row, col);
+
+                        if (board.getPiece(end) == null) {
+                            moves.add(new ChessMove(myPosition, end, null));
+                        } else if (board.getPiece(end).getTeamColor() != pieceColor) {
+                            moves.add(new ChessMove(myPosition, end, null));
+                        }
+                    }
+                }
                 break;
             case PAWN:
 
