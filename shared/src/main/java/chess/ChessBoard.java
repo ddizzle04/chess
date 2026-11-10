@@ -71,7 +71,6 @@ public class ChessBoard {
                 ChessPiece.PieceType.KNIGHT,
                 ChessPiece.PieceType.ROOK
         };
-
         for (int col = 1; col <= 8; col++) {
             ChessPiece.PieceType type = backRow[col - 1];
 
