@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Collection;
 import java.util.Objects;
+import java.util.ArrayList;
 
 /**
  * A class that can manage a chess game, making moves on a board
@@ -52,7 +53,40 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = board.getPiece(startPosition);
+
+        if (piece == null) {
+            return null;
+        }
+
+        Collection<ChessMove> valid = new ArrayList<>();
+
+        for (ChessMove move : piece.pieceMoves(board, startPosition)) {
+            ChessPosition endPosition = move.getEndPosition();
+            ChessPiece capturedPiece = board.getPiece(endPosition);
+
+            ChessPiece movedPiece = piece;
+            if (move.getPromotionPiece() != null) {
+                movedPiece = new ChessPiece(
+                        piece.getTeamColor(),
+                        move.getPromotionPiece()
+                );
+            }
+
+            board.addPiece(startPosition, null);
+            board.addPiece(endPosition, movedPiece);
+
+            try {
+                if (!isInCheck(piece.getTeamColor())) {
+                    valid.add(move);
+                }
+            } finally {
+                board.addPiece(startPosition, piece);
+                board.addPiece(endPosition, capturedPiece);
+            }
+        }
+
+        return valid;
     }
 
     /**
