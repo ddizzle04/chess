@@ -43,4 +43,31 @@ public class UserServiceTest {
         assertThrows(IllegalArgumentException.class, () ->
                 service.register("", "password123", "player@example.com"));
     }
+
+    @Test
+    public void loginSuccess() throws DataAccessException {
+        UserDAO users = new MemoryUserDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        UserService service = new UserService(users, auths);
+
+        service.register("player1", "password123", "player@example.com");
+
+        AuthData result = service.login("player1", "password123");
+
+        assertEquals("player1", result.username());
+        assertNotNull(result.authToken());
+        assertNotNull(auths.getAuth(result.authToken()));
+    }
+
+    @Test
+    public void loginWrongPassword() throws DataAccessException {
+        UserDAO users = new MemoryUserDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        UserService service = new UserService(users, auths);
+
+        service.register("player1", "password123", "player@example.com");
+
+        assertThrows(IllegalStateException.class, () ->
+                service.login("player1", "wrongpassword"));
+    }
 }
