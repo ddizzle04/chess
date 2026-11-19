@@ -42,4 +42,29 @@ public class GameServiceTest {
         assertThrows(IllegalArgumentException.class, () ->
                 service.createGame("token123", ""));
     }
+
+    @Test
+    public void listGamesSuccess() throws DataAccessException {
+        GameDAO games = new MemoryGameDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        GameService service = new GameService(games, auths);
+
+        auths.createAuth(new AuthData("token123", "player1"));
+
+        service.createGame("token123", "Game One");
+        service.createGame("token123", "Game Two");
+
+        var result = service.listGames("token123");
+
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void listGamesUnauthorized() {
+        GameService service = new GameService(
+                new MemoryGameDAO(), new MemoryAuthDAO());
+
+        assertThrows(IllegalStateException.class, () ->
+                service.listGames("invalidToken"));
+    }
 }
