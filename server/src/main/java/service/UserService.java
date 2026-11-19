@@ -58,5 +58,14 @@ public class UserService {
 
         return auth;
     }
+    public void logout(String authToken) throws DataAccessException {
+        AuthData auth = authDAO.getAuth(authToken);
+
+        if (auth == null) {
+            throw new IllegalStateException("unauthorized");
+        }
+
+        authDAO.deleteAuth(authToken);
+    }
 
 }

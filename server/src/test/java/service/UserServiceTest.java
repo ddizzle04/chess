@@ -70,4 +70,26 @@ public class UserServiceTest {
         assertThrows(IllegalStateException.class, () ->
                 service.login("player1", "wrongpassword"));
     }
+    @Test
+    public void logoutSuccess() throws DataAccessException {
+        UserDAO users = new MemoryUserDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        UserService service = new UserService(users, auths);
+
+        AuthData auth = service.register(
+                "player1", "password123", "player@example.com");
+
+        service.logout(auth.authToken());
+
+        assertNull(auths.getAuth(auth.authToken()));
+    }
+
+    @Test
+    public void logoutInvalidToken() {
+        UserService service = new UserService(
+                new MemoryUserDAO(), new MemoryAuthDAO());
+
+        assertThrows(IllegalStateException.class, () ->
+                service.logout("invalidToken"));
+    }
 }
