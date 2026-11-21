@@ -42,4 +42,48 @@ public class GameService {
 
         return gameDAO.listGames();
     }
+    public void joinGame(String authToken, String playerColor, int gameID)
+            throws DataAccessException {
+
+        var auth = authDAO.getAuth(authToken);
+
+        if (auth == null) {
+            throw new IllegalStateException("unauthorized");
+        }
+
+        GameData game = gameDAO.getGame(gameID);
+
+        if (game == null) {
+            throw new IllegalArgumentException("bad request");
+        }
+
+        if (!"WHITE".equals(playerColor) && !"BLACK".equals(playerColor)) {
+            throw new IllegalArgumentException("bad request");
+        }
+
+        String white = game.whiteUsername();
+        String black = game.blackUsername();
+
+        if (playerColor.equals("WHITE")) {
+            if (white != null) {
+                throw new IllegalStateException("already taken");
+            }
+            white = auth.username();
+        } else {
+            if (black != null) {
+                throw new IllegalStateException("already taken");
+            }
+            black = auth.username();
+        }
+
+        GameData updatedGame = new GameData(
+                game.gameID(),
+                white,
+                black,
+                game.gameName(),
+                game.game()
+        );
+
+        gameDAO.updateGame(updatedGame);
+    }
 }

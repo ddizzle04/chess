@@ -67,4 +67,19 @@ public class GameServiceTest {
         assertThrows(IllegalStateException.class, () ->
                 service.listGames("invalidToken"));
     }
+    @Test
+    public void joinGameSuccess() throws DataAccessException {
+        GameDAO games = new MemoryGameDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        GameService service = new GameService(games, auths);
+
+        auths.createAuth(new AuthData("token123", "player1"));
+
+        int gameID = service.createGame("token123", "My Game");
+
+        service.joinGame("token123", "WHITE", gameID);
+
+        assertEquals("player1", games.getGame(gameID).whiteUsername());
+        assertNull(games.getGame(gameID).blackUsername());
+    }
 }
