@@ -126,4 +126,20 @@ public class GameServiceTest {
         assertEquals("player1", games.getGame(gameID).blackUsername());
         assertNull(games.getGame(gameID).whiteUsername());
     }
+    @Test
+    public void joinGameInvalidColor() throws DataAccessException {
+        GameDAO games = new MemoryGameDAO();
+        AuthDAO auths = new MemoryAuthDAO();
+        GameService service = new GameService(games, auths);
+
+        auths.createAuth(new AuthData("token123", "player1"));
+
+        int gameID = service.createGame("token123", "My Game");
+
+        assertThrows(IllegalArgumentException.class, () ->
+                service.joinGame("token123", "GREEN", gameID));
+
+        assertNull(games.getGame(gameID).whiteUsername());
+        assertNull(games.getGame(gameID).blackUsername());
+    }
 }
