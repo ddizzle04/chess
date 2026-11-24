@@ -53,6 +53,49 @@ public class Server {
                 ctx.result("{\"message\":\"Error: already taken\"}");
             }
         });
+        javalin.post("/session", ctx -> {
+            try {
+                UserData user = gson.fromJson(ctx.body(), UserData.class);
+
+                if (user == null) {
+                    throw new IllegalArgumentException("bad request");
+                }
+
+                AuthData auth = userService.login(
+                        user.username(),
+                        user.password()
+                );
+
+                ctx.contentType("application/json");
+                ctx.result(gson.toJson(auth));
+
+            } catch (IllegalArgumentException e) {
+                ctx.status(400);
+                ctx.contentType("application/json");
+                ctx.result("{\"message\":\"Error: bad request\"}");
+
+            } catch (IllegalStateException e) {
+                ctx.status(401);
+                ctx.contentType("application/json");
+                ctx.result("{\"message\":\"Error: unauthorized\"}");
+            }
+        });
+
+        javalin.delete("/session", ctx -> {
+            try {
+                String authToken = ctx.header("Authorization");
+
+                userService.logout(authToken);
+
+                ctx.contentType("application/json");
+                ctx.result("{}");
+
+            } catch (IllegalStateException e) {
+                ctx.status(401);
+                ctx.contentType("application/json");
+                ctx.result("{\"message\":\"Error: unauthorized\"}");
+            }
+        });
 
     }
 
